@@ -1,0 +1,45 @@
+#!/bin/sh
+
+DAEMON="tailscaled"
+PIDFILE=/var/run/$DAEMON.pid
+LOGFILE=/tmp/tailscale.log
+TAILSCALED="/usr/bin/$DAEMON"
+
+fail_unless_root() {
+	if [ "$(id -u)" != '0' ]; then
+		log_failure_msg "must be run as root"
+		exit 1
+	fi
+}
+
+case "$1" in
+        start)
+                fail_unless_root
+                $TAILSCALED --cleanup
+                start-stop-daemon --start --background --no-close \
+                        --exec $TAILSCALED \
+                        --pidfile "$PIDFILE" \
+                        --make-pidfile \
+                        -- \
+                        --state=/var/lib/tailscale/tailscaled.state \
+                        --socket=/run/tailscale/tailscaled.sock >> $LOGFILE 2>&1
+                status=$?
+                log_end_msg $status
+        ;;
+
+        stop)
+                fail_unless_root
+                start-stop-daemon --stop --pidfile "$PIDFILE" \
+                        --remove-pidfile --retry 10
+                status=$?
+                log_end_msg $status
+        ;;
+
+        status)
+                status_of_proc -p "$PIDFILE" "$TAILSCALED" "tailscaled"
+        ;;
+
+        *)
+                echo "Usage: $0 {start|stop|status}"
+                exit 1 ;;
+esac
