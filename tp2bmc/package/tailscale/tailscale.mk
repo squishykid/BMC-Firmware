@@ -43,15 +43,9 @@ TAILSCALE_TAGS = \
 
 
 define TAILSCALE_INSTALL_TARGET_CMDS
-	$(INSTALL) -D -m 0755 $(@D)/bin/tailscaled $(TARGET_DIR)/usr/sbin/
+	$(INSTALL) -D -m 0755 $(@D)/bin/tailscaled $(TARGET_DIR)/usr/bin/
+	(cd $(TARGET_DIR)/usr/bin; ln -s tailscaled tailscale)
 endef
-
-# define TAILSCALE_INSTALL_TARGET_CMDS
-# 	$(INSTALL) -D -m 755 $(BR2_EXTERNAL_TP2BMC_PATH)/package/tailscale/tailscaled \
-#         $(TARGET_DIR)/usr/bin/tailscaled
-#
-#     (cd $(TARGET_DIR)/usr/bin; ln -s tailscaled tailscale)
-# endef
 
 define TAILSCALE_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 755 $(BR2_EXTERNAL_TP2BMC_PATH)/package/tailscale/S999tailscale \
