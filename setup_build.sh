@@ -9,11 +9,14 @@
 #   ./setup_build.sh <install dir> (optional)
 #
 
+set -x
+
 download_dir=$(mktemp -d)
 install_dir="$1"
 buildroot_url='https://buildroot.org/downloads/buildroot-2023.11.tar.gz'
+buildroot_url='https://github.com/squishykid/buildroot/archive/d55521bbf85889e470d22bab27fb94c2258cd71d.tar.gz'
 buildroot=$(basename "$buildroot_url")
-buildroot_folder="${buildroot%.tar.gz}"
+buildroot_folder="buildroot-d55521bbf85889e470d22bab27fb94c2258cd71d"
 project_root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 pushd "$download_dir"
